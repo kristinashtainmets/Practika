@@ -3,4 +3,5 @@ let app = new Vue({
     data: {
         product: "Socks"
     }
-})
+ })
+ 
