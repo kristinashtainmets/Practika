@@ -26,10 +26,11 @@ let app = new Vue({
         },
         delfromCart() {
             this.cart -= 1
-        }
-    },
-    updateProduct(variantImage) {
+        },
+        updateProduct(variantImage) {
         this.image = variantImage
-    },     
+        }, 
+    },
+        
  })
  
