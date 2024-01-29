@@ -39,7 +39,8 @@
                 </div>
      
                 <button v-on:click="addToCart" :disabled="!inStock" :class="{ disabledButton: !inStock }">
-                    Add to cart
+                    <p v-if="inStock">Add to stock</p>
+                    <p v-else :class="{ outOfSocks: !inStock }">Out of Stock</p>
                 </button>            
             </div>
         </div>
