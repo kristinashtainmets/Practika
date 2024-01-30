@@ -1,37 +1,24 @@
-Vue.component('product-details', {
-    props: {
-        details: {
-            type: Array,
-            required: true
-        }
-    },
-    template: `
-    <ul>
-        <li v-for="detail in details">{{ detail }}</li>
-    </ul>
-    `
-})
-
 Vue.component('product', {
     props: {
         premium: {
             type: Boolean,
             required: true
         }
-    },   
+    },
     template: `
     <div class="product">
-        <div class="product-image">
+     <div class="product-image">
             <img :src="image" :alt="altText"/>
         </div>
-     
+ 
         <div class="product-info">
             <h1>{{ title }}</h1>
             <p v-if="inStock">In stock</p>
             <p v-else>Out of Stock</p>
-            <product-details :details="details"></product-details>
-            <p>User is premium: {{ premium }}</p>
-            <p>Shipping: {{ shipping }}</p>
+            <ul>
+                <li v-for="detail in details">{{ detail }}</li>
+            </ul>
+           <p>Shipping: {{ shipping }}</p>
             <div
                     class="color-box"
                     v-for="(variant, index) in variants"
@@ -39,12 +26,12 @@ Vue.component('product', {
                     :style="{ backgroundColor:variant.variantColor }"
                     @mouseover="updateProduct(index)"
             ></div>
-            </div>
-     
+           
+ 
             <div class="cart">
                 <p>Cart({{ cart }})</p>
             </div>
-            
+ 
             <button
                     v-on:click="addToCart"
                     :disabled="!inStock"
@@ -52,11 +39,12 @@ Vue.component('product', {
             >
                 Add to cart
             </button>
+        
         </div>
     </div>
   `,
     data() {
-        return{
+        return {
             product: "Socks",
             brand: 'Vue Mastery',
             selectedVariant: 0,
@@ -95,7 +83,7 @@ Vue.component('product', {
         image() {
             return this.variants[this.selectedVariant].variantImage;
         },
-        inStock(){
+        inStock() {
             return this.variants[this.selectedVariant].variantQuantity
         },
         shipping() {
@@ -104,13 +92,13 @@ Vue.component('product', {
             } else {
                 return 2.99
             }
-        }  
+        }
     }
-})
-
-let app = new Vue({
+ })
+ let app = new Vue({
     el: '#app',
     data: {
         premium: true
     }
-})
+ })
+ 
