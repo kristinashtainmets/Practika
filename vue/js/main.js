@@ -33,12 +33,20 @@ Vue.component('product-tabs', {
        <div v-show="selectedTab === 'Make a Review'">
          <product-review></product-review>
        </div>
+       <div v-show="selectedTab === 'Shipping'">
+         <p>Shipping: {{ shipping }}</p>
+       </div>
+       <div v-show="selectedTab === 'Details'">
+         <ul>
+               <li v-for="detail in details">{{ detail }}</li>
+         </ul>
+       </div>
      </div>
      </div> 
 `,
     data() {
         return {
-            tabs: ['Reviews', 'Make a Review'],
+            tabs: ['Reviews', 'Make a Review','Shipping','Details'],
             selectedTab: 'Reviews',  // устанавливается с помощью @click
             details: ['80% cotton', '20% polyester', 'Gender-neutral'],
         }
@@ -98,7 +106,7 @@ Vue.component('product', {
            </button>    
        </div>          
        </div>   
-       <product-tabs :reviews="reviews"></product-tabs>       
+       <product-tabs :reviews="reviews" :shipping="shipping"></product-tabs>       
        </div>     
  `,
     data() {
