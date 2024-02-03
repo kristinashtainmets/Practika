@@ -91,3 +91,23 @@ textarea {
 .outOfSocks{
     text-decoration: line-through
 }
+
+.size{
+    margin-left: 30px;
+    display: flex;
+    flex-direction: row;
+}
+
+.size-info {
+    display: flex;
+    flex-direction: row;
+    margin-left: 70px;
+}
+
+.product:hover .size-info {
+    display: flex;
+}
+
+.crossed-out {
+    text-decoration: line-through;
+}

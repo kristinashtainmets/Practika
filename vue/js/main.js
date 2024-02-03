@@ -1,4 +1,5 @@
 let eventBus = new Vue()
+
 Vue.component('product-tabs', {
     props: {
         reviews: {
@@ -47,28 +48,23 @@ Vue.component('product-tabs', {
     data() {
         return {
             tabs: ['Reviews', 'Make a Review','Shipping','Details'],
-            selectedTab: 'Reviews',  // устанавливается с помощью @click
+            selectedTab: 'Reviews',  
             details: ['80% cotton', '20% polyester', 'Gender-neutral'],
         }
 
-    },
-    computed: {
-        shipping() {
-            if (this.premium) {
-                return "Free";
-            } else {
-                return 2.99
-            }
-        }
     }
 })
 
 Vue.component('product', {
-
     mounted() {
         eventBus.$on('review-submitted', productReview => {
             this.reviews.push(productReview)
-        })
+            localStorage.setItem('reviews', JSON.stringify(this.reviews));
+        });
+        let savedReviews = localStorage.getItem('reviews');
+        if (savedReviews) {
+            this.reviews = JSON.parse(savedReviews);
+        }
     },
     props: {
         premium: {
@@ -81,6 +77,7 @@ Vue.component('product', {
     <div class="product-image">
            <img :src="image" :alt="altText"/>
        </div>
+
        <div class="product-info">
            <h1>{{ title }}</h1>
            <p v-if="inStock">In stock</p>
@@ -89,14 +86,18 @@ Vue.component('product', {
                <li v-for="detail in details">{{ detail }}</li>
            </ul>
           <p>Shipping: {{ shipping }}</p>
-           <div
-                   class="color-box"
-                   v-for="(variant, index) in variants"
-                   :key="variant.variantId"
-                   :style="{ backgroundColor:variant.variantColor }"
-                   @mouseover="updateProduct(index)"
-           ></div>
-          
+          <div
+          class="color-box"
+          v-for="(variant, index) in variants"
+          :key="variant.variantId"
+          :style="{ backgroundColor:variant.variantColor }"
+          @mouseover="updateProduct(index); showSizeInfo()"
+          @mouseout="hideSizeInfo()"
+            >
+            <div class="size-info" v-if="showSizes && selectedColor === variant.variantColor">
+                <div class="size" v-for="size in sizes" :class="{ 'crossed-out': variant.variantColor === 'blue' }">{{ size }}</div>
+            </div>
+            </div>
            <button
                    v-on:click="addToCart"
                    :disabled="!inStock"
@@ -104,7 +105,6 @@ Vue.component('product', {
            >
                Add to cart
            </button>    
-       </div>          
        </div>   
        <product-tabs :reviews="reviews" :shipping="shipping"></product-tabs>       
        </div>     
@@ -116,6 +116,8 @@ Vue.component('product', {
             selectedVariant: 0,
             altText: "A pair of socks",
             details: ['80% cotton', '20% polyester', 'Gender-neutral'],
+            showSizes: false,
+            selectedColor: null,
             variants: [
                 {
                     variantId: 2234,
@@ -130,6 +132,7 @@ Vue.component('product', {
                     variantQuantity: 0
                 }
             ],
+            sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
             reviews: []
         }
     },
@@ -139,14 +142,15 @@ Vue.component('product', {
         },
         updateProduct(index) {
             this.selectedVariant = index;
+            this.selectedColor = this.variants[index].variantColor;
             console.log(index);
         },
-        mounted: function () {
-            eventBus.$on('review-submitted', productReview => {
-                this.reviews.push(productReview)
-            })
+        showSizeInfo() {
+            this.showSizes = true;
+        },
+        hideSizeInfo() {
+            this.showSizes = false;
         }
-
     },
     computed: {
         title() {
@@ -167,6 +171,7 @@ Vue.component('product', {
         }
     }
 })
+
 Vue.component('product-review', {
     props: {
         reviews: {
@@ -174,7 +179,9 @@ Vue.component('product-review', {
             required: false
         }
     },
+
     template: `
+
     <form class="review-form" @submit.prevent="onSubmit">
     
     <p v-if="errors.length">
@@ -239,6 +246,9 @@ Vue.component('product-review', {
         }
     }
 })
+
+
+
 let app = new Vue({
     props: {
         reviews: {
@@ -254,6 +264,20 @@ let app = new Vue({
     methods: {
         updateCart(id) {
             this.cart.push(id);
+        }
+    },
+    created() {
+        let savedCart = localStorage.getItem('cart');
+        if (savedCart) {
+            this.cart = JSON.parse(savedCart);
+        }
+    },
+    watch: {
+        cart: {
+            handler() {
+                localStorage.setItem('cart', JSON.stringify(this.cart));
+            },
+            deep: true
         }
     }
 })
